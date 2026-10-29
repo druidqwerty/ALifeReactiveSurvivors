@@ -43,8 +43,8 @@ Zombies are not changed. In multiplayer the add-on runs where A-Life runs the NP
 
 - Project Zomboid Build 42 (42.20+), [Project A-Life [ALIFE NPCS]](https://steamcommunity.com/sharedfiles/filedetails/?id=3803984183).
 - Subscribe on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3829332775) and enable
-  "A-Life: Reactive Survivors" after Project A-Life. On a server add `ALifeReactiveSurvivors` to `Mods=`; every player
-  needs the mod.
+  "A-Life: Reactive Survivors" after Project A-Life. On a server add `ALifeReactiveSurvivors` to `Mods=` (after
+  `ProjectALifeNPCs`) and `3829332775` to `WorkshopItems=`; every player needs the mod.
 - Or without Steam: unpack the zip from [Releases](https://github.com/druidqwerty/ALifeReactiveSurvivors/releases) to
   `%USERPROFILE%\Zomboid\mods\` so that you get `mods\ALifeReactiveSurvivors\42\mod.info`.
 

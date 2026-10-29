@@ -42,8 +42,8 @@ English version: [README.md](README.md)
 
 - Project Zomboid Build 42 (42.20+), [Project A-Life [ALIFE NPCS]](https://steamcommunity.com/sharedfiles/filedetails/?id=3803984183).
 - Подпишитесь в [мастерской Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=3829332775) и включите
-  «A-Life: Reactive Survivors» после Project A-Life. На сервере добавьте `ALifeReactiveSurvivors` в `Mods=`; мод нужен
-  каждому игроку.
+  «A-Life: Reactive Survivors» после Project A-Life. На сервере добавьте `ALifeReactiveSurvivors` в `Mods=` (после
+  `ProjectALifeNPCs`) и `3829332775` в `WorkshopItems=`; мод нужен каждому игроку.
 - Или без Steam: распакуйте zip из [Releases](https://github.com/druidqwerty/ALifeReactiveSurvivors/releases) в
   `%USERPROFILE%\Zomboid\mods\`, чтобы получилось `mods\ALifeReactiveSurvivors\42\mod.info`.
 
