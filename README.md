@@ -7,9 +7,9 @@ NPCs react to the world sooner. They attack a zombie before it bites, run from a
 vehicles, and say what they do (English and Russian). Project A-Life itself is not changed and none of its code is
 copied; this is a separate Lua mod that adjusts A-Life through its public tables and functions.
 
-> **Test version.** 0.1.0 (the Steam build) works in our game but has not been through a long session yet.
-> 0.2.0 (groups, vehicles, lines) has passed only the simulation tests so far and is a GitHub pre-release.
-> Feedback is welcome in the Steam comments or the Issues.
+> **Test version.** 0.2.0 (groups, vehicles, lines) is on the Steam Workshop for players to test: it has passed the
+> simulation tests, but not a long game session yet, and the numbers may change. Please report bugs (what the NPC did
+> + your `Zomboid/console.txt`) in the Steam comments or the Issues.
 
 **Steam Workshop:** https://steamcommunity.com/sharedfiles/filedetails/?id=3829332775 · **Source code (MIT):** https://github.com/druidqwerty/ALifeReactiveSurvivors
 
@@ -130,7 +130,7 @@ because a freshly hit NPC is kept quiet for five seconds. No A-Life file is modi
 
 ## Changelog
 
-- **0.2.0** (2026-10-29, GitHub pre-release, not on Steam yet): ladders for groups of zombies and for vehicles,
+- **0.2.0** (2026-10-29, test version, Steam + GitHub): ladders for groups of zombies and for vehicles,
   unarmed NPCs stay out, speech lines in English and Russian, reactions to a bite and to being hit by a car; settings
   moved to `01_ALR_Settings.lua`.
 - **0.1.0** (2026-10-29, Steam + GitHub): attack a closing zombie before contact, faster draw and swings, shorter
