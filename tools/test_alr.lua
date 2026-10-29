@@ -129,10 +129,10 @@ end
 local function eq(name, got, want) check(name, got == want, tostring(got) .. " ~= " .. tostring(want)) end
 
 -- 1. boot (third tick finds Project A-Life and installs; the tick handler leaves)
-eq("tick handler registered", #Events.OnTick.handlers, 1)
+eq("tick handlers registered (install retry + delayed lines)", #Events.OnTick.handlers, 2)
 Events.OnTick.fire()
 check("installed", A.Boot.installed)
-eq("tick handler removed", #Events.OnTick.handlers, 0)
+eq("install retry handler removed", #Events.OnTick.handlers, 1)
 local wrappedCount = 0
 for _ in pairs(A.wrapped) do wrappedCount = wrappedCount + 1 end
 eq("wrapped count", wrappedCount, 6)

@@ -1,10 +1,14 @@
 -- A-Life: Reactive Survivors - bootstrap. Installs the tuning and the hooks
 -- once Project A-Life is loaded (OnGameStart / OnServerStarted, with an OnTick
--- fallback), and prints the counters every minute.
+-- fallback), flushes delayed lines, and prints the counters every minute.
 
 require "ALifeReactive/00_ALR_Core"
+require "ALifeReactive/01_ALR_Settings"
+require "ALifeReactive/02_ALR_Lines"
 require "ALifeReactive/ALR_Tuning"
 require "ALifeReactive/ALR_Hooks"
+require "ALifeReactive/ALR_Hazards"
+require "ALifeReactive/ALR_Reactions"
 
 local A = ALifeReactive
 local B = { installed = false, tries = 0, lastReport = nil, minute = 0 }
@@ -35,6 +39,8 @@ function B.install()
         A.Tuning.hookConfigure(a)
         A.Tuning.apply(a)
         A.Hooks.install(a)
+        A.Hazards.install(a)
+        A.Reactions.install(a)
     end)
     if not ok then
         A.metrics.errors = A.metrics.errors + 1
@@ -45,24 +51,15 @@ function B.install()
     return true
 end
 
-local function snapshot()
-    local m = A.metrics
-    return m.reactiveChecks .. "/" .. m.reactiveCommits .. "/" .. m.reactiveRefused .. "/"
-        .. m.leaseCaps .. "/" .. m.ignoreCaps .. "/" .. m.draws .. "/" .. m.configures .. "/" .. m.errors
-end
-
 function B.report()
     local every = tonumber(A.settings.report.everyMinutes) or 0
     if every <= 0 or not B.installed then return end
     B.minute = B.minute + 1
     if B.minute % every ~= 0 then return end
-    local current = snapshot()
+    local current = A.counters()
     if current == B.lastReport then return end
     B.lastReport = current
-    local m = A.metrics
-    A.log("checks=" .. m.reactiveChecks, "commits=" .. m.reactiveCommits, "refused=" .. m.reactiveRefused,
-        "leaseCaps=" .. m.leaseCaps, "ignoreCaps=" .. m.ignoreCaps, "draws=" .. m.draws,
-        "configures=" .. m.configures, "errors=" .. m.errors)
+    A.log(current)
 end
 
 local function add(name, callback)
@@ -87,6 +84,12 @@ if not A.bootRegistered then
         if B.installed or B.tries > 600 then remove("OnTick", tick) end
     end
     add("OnTick", tick)
+    -- Delayed lines ("you hit me!" a moment after the pain bark).
+    add("OnTick", function()
+        if B.installed and A.Reactions ~= nil and #A.Reactions.pending > 0 then
+            pcall(A.Reactions.flush, A.now())
+        end
+    end)
     add("EveryOneMinute", function() pcall(B.report) end)
 end
 

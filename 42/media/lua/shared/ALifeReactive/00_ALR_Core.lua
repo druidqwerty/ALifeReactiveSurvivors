@@ -1,94 +1,24 @@
 -- A-Life: Reactive Survivors - shared core. One global table, ALifeReactive.
 -- Nothing here touches Project A-Life at load time; the hooks and the tuning
 -- are installed at OnGameStart / OnServerStarted (see server/ALifeReactive).
+-- Settings live in 01_ALR_Settings.lua, speech lines in 02_ALR_Lines.lua.
 
 ALifeReactive = ALifeReactive or {}
 local A = ALifeReactive
 
 A.MOD_ID = "ALifeReactiveSurvivors"
-A.VERSION = "0.1.0"
+A.VERSION = "0.2.0"
 A.TAG = "[ALR]"
-
--- Every knob of phase 1. Edit, then restart the game (or the host).
--- "base" = the value Project A-Life 1.4.6 uses on its own.
-A.settings = {
-    enabled = true,
-    debug = false,
-
-    -- Reactive engagement. Base: a travelling / idle NPC ignores a zombie until
-    -- it is 1.5 tiles away (contact). Here the NPC commits to a zombie that is
-    -- within nearTiles, or within closingTiles while walking at the NPC and in
-    -- sight. Retreating / recovering NPCs, zombie-avoid mode and gun discipline
-    -- keep the base behaviour.
-    react = {
-        enabled = true,
-        nearTiles = 2.5,
-        closingTiles = 6,
-        needVisible = true,
-    },
-
-    -- After a retreat the base mod avoids the same zombie for 25 s (9 s after
-    -- a recovery). Cap for zombie targets, ms.
-    lease = { zombieMs = 8000 },
-
-    -- The base mod ignores a zombie for 10-15 s after a failed approach, a
-    -- blocked line or another floor. Cap for zombie targets, ms.
-    ignore = { zombieCapMs = 4000 },
-
-    -- Weapon draw: scale of the base reach + take sequence (420+750 /
-    -- 450+850 ms). 1 = base.
-    draw = { scale = 0.8 },
-
-    -- ProjectALife.BehaviorSettings.combat and Combat.settings.
-    -- Base: ready 220, windup 150, recovery 680, interval 650,
-    -- unreachable cooldown 1200, self-defence reach 1.5, closing run 80 % / 5.5.
-    combat = {
-        meleeReadyMs = 120,
-        meleeWindupMs = 90,
-        meleeRecoveryMs = 520,
-        attackIntervalMs = 500,
-        unreachableCooldownMs = 700,
-        leashSelfDefenceReach = 2.0,
-        closingRunChancePercent = 100,
-        closingRunMinimumDistance = 3.5,
-    },
-
-    -- Pause after a swing clip per weapon class (Combat.MELEE_TIMING, base 400).
-    meleeDelayMs = { oneHanded = 250, twoHanded = 300 },
-
-    -- Endurance. Base: re-engage at 72, minimum retreat 2200, damage retreat 2600.
-    endurance = { reengageThreshold = 50, minimumRetreatMs = 1500, damageRetreatMs = 1500 },
-
-    -- Survival: retreat on recent damage only below this HP ratio (base 0.6).
-    survival = { flinchHealth = 0.45 },
-
-    -- Decision loop passive scan cadence. Base: 250 hot / 1000 mid / 2500 far,
-    -- "close to a player" radius 12.
-    lanes = { passiveHotMs = 150, passiveMidMs = 400, passiveFarMs = 1200, passiveCloseRadius = 16 },
-
-    -- ZombieFocus relevance filter (A-Life's own and the Jeem Extension's copy
-    -- in front of it). Base: ignore 750 ms, closing radius 15, radius from the
-    -- sandbox (8). minRadius lifts a smaller sandbox radius (A-Life's filter
-    -- only; Jeem reads its radius from its own option).
-    focus = { ignoreMs = 400, closingRadius = 18, minRadius = 10 },
-
-    -- Fear module. Base: ignore 1000 ms, far 8 tiles.
-    fear = { ignoreMs = 500, farTiles = 10 },
-
-    -- Caution module: "wait for the zombies to pass" idle. Base 3500 / 2500 ms.
-    caution = { waitMs = 1500, lightWaitMs = 1200 },
-
-    -- Gun discipline: how often "may I shoot this zombie" is re-rolled (base 30 s).
-    gun = { rollMs = 10000 },
-
-    -- Console report of the counters every N minutes (0 = off).
-    report = { everyMinutes = 1 },
-}
+A.settings = A.settings or {}
 
 A.metrics = {
-    reactiveChecks = 0, reactiveCommits = 0, reactiveRefused = 0,
+    reactiveChecks = 0, reactiveCommits = 0, reactiveRefused = 0, crowdRefused = 0, unarmedRefused = 0,
     leaseCaps = 0, ignoreCaps = 0, draws = 0, configures = 0, errors = 0,
+    dodges = 0, dives = 0, courtesies = 0, fallbacks = 0, regroups = 0, bites = 0, hits = 0, lines = 0,
 }
+
+-- uid -> shell, as seen by our hooks (weak values).
+A.shells = setmetatable({}, { __mode = "v" })
 
 function A.now()
     if type(getTimestampMs) == "function" then return getTimestampMs() end
@@ -101,10 +31,47 @@ function A.log(...)
     print(table.concat(parts, " "))
 end
 
-function A.isZombie(body)
+function A.fail(where, err)
+    A.metrics.errors = A.metrics.errors + 1
+    if A.settings.debug then A.log(where, "failed:", err) end
+end
+
+function A.rand(n)
+    n = math.max(1, math.floor(tonumber(n) or 1))
+    if type(ZombRand) == "function" then return ZombRand(n) end
+    return math.random(0, n - 1)
+end
+
+local function instance(body, class)
     if body == nil or type(instanceof) ~= "function" then return false end
-    local ok, result = pcall(instanceof, body, "IsoZombie")
+    local ok, result = pcall(instanceof, body, class)
     return ok and result == true
+end
+
+function A.isZombie(body) return instance(body, "IsoZombie") end
+function A.isPlayer(body) return instance(body, "IsoPlayer") end
+
+-- x, y, z of a game object, or nil.
+function A.xyz(body)
+    if body == nil or type(body.getX) ~= "function" then return nil end
+    local ok, x, y, z = pcall(function() return body:getX(), body:getY(), body:getZ() end)
+    if not ok or type(x) ~= "number" or type(y) ~= "number" then return nil end
+    return x, y, type(z) == "number" and z or 0
+end
+
+function A.noteShell(actor, shell)
+    if type(actor) == "table" and type(actor.uid) == "string" and shell ~= nil then A.shells[actor.uid] = shell end
+end
+
+function A.shellFor(uid)
+    local shell = A.shells[uid]
+    if shell ~= nil then return shell end
+    local talk = ProjectALife and ProjectALife.Talk
+    if talk ~= nil and type(talk.shellFor) == "function" then
+        local ok, found = pcall(talk.shellFor, uid)
+        if ok then return found end
+    end
+    return nil
 end
 
 -- Replace tbl[name] with factory(original). False when there is nothing to wrap.
@@ -132,13 +99,20 @@ function A.set(tbl, key, value, label)
     return true
 end
 
+function A.counters()
+    local m = A.metrics
+    return "checks=" .. m.reactiveChecks .. " commits=" .. m.reactiveCommits .. " refused=" .. m.reactiveRefused
+        .. " crowdRefused=" .. m.crowdRefused .. " unarmedRefused=" .. m.unarmedRefused
+        .. " dodges=" .. m.dodges .. " dives=" .. m.dives .. " stepAside=" .. m.courtesies
+        .. " fallbacks=" .. m.fallbacks .. " regroups=" .. m.regroups .. " bites=" .. m.bites .. " hits=" .. m.hits
+        .. " lines=" .. m.lines .. " leaseCaps=" .. m.leaseCaps .. " ignoreCaps=" .. m.ignoreCaps
+        .. " draws=" .. m.draws .. " configures=" .. m.configures .. " errors=" .. m.errors
+end
+
 -- Console helper: ALifeReactive.status()
 function A.status()
     A.log("v" .. A.VERSION, "enabled=" .. tostring(A.settings.enabled))
-    local m = A.metrics
-    A.log("checks=" .. m.reactiveChecks, "commits=" .. m.reactiveCommits, "refused=" .. m.reactiveRefused,
-        "leaseCaps=" .. m.leaseCaps, "ignoreCaps=" .. m.ignoreCaps, "draws=" .. m.draws,
-        "configures=" .. m.configures, "errors=" .. m.errors)
+    A.log(A.counters())
     local names = {}
     for label in pairs(A.originals) do names[#names + 1] = label end
     table.sort(names)

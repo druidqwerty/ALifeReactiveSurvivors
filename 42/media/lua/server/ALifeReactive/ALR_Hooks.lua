@@ -2,6 +2,9 @@
 -- functions. Installed once at game start by ALR_Boot.
 
 require "ALifeReactive/00_ALR_Core"
+require "ALifeReactive/01_ALR_Settings"
+require "ALifeReactive/02_ALR_Lines"
+require "ALifeReactive/ALR_Crowd"
 
 local A = ALifeReactive
 local H = { installed = false }
@@ -38,9 +41,22 @@ function H.closingZombie(a, shell, threat)
     return true, "closing"
 end
 
+-- No weapon at all: A-Life shoves at contact; we do not send it in early.
+local function unarmed(a, shell)
+    local Combat = a.Combat
+    if Combat == nil or type(Combat.weaponFor) ~= "function" or type(Combat.isUnarmed) ~= "function" then
+        return false
+    end
+    local ok, weapon = pcall(Combat.weaponFor, shell)
+    if not ok then return false end
+    local okBare, bare = pcall(Combat.isUnarmed, weapon)
+    return okBare and bare == true
+end
+
 -- Base verdict "bypass / continue_mission" for a closing zombie becomes
--- "commit". Retreating / recovering NPCs, zombie-avoid mode and the gun
--- discipline (gun user without a melee weapon) keep the base verdict.
+-- "commit". Kept as in the base: retreating / recovering NPCs, zombie-avoid
+-- mode, the gun discipline (gun user without a melee weapon), unarmed NPCs,
+-- and a crowd (gateCount zombies within the crowd radius).
 function H.installEngagement(a)
     A.wrap(a.DecisionLoop, "engagement", function(original)
         return function(actor, shell, threat, threatKind, state, now)
@@ -54,14 +70,27 @@ function H.installEngagement(a)
             if type(state) == "table" and (state.kind == "retreat" or state.kind == "recovering") then
                 return choice, facts
             end
+            A.noteShell(actor, shell)
             A.metrics.reactiveChecks = A.metrics.reactiveChecks + 1
             local ok, danger, why = pcall(H.closingZombie, a, shell, threat)
             if not ok then
-                A.metrics.errors = A.metrics.errors + 1
-                if A.settings.debug then A.log("closingZombie failed:", danger) end
+                A.fail("closingZombie", danger)
                 return choice, facts
             end
             if not danger then return choice, facts end
+            if A.settings.react.unarmedSkip and unarmed(a, shell) then
+                A.metrics.unarmedRefused = A.metrics.unarmedRefused + 1
+                A.say(actor, shell, "unarmed", 15000)
+                return choice, facts
+            end
+            local crowdSettings = A.settings.crowd
+            if type(crowdSettings) == "table" and crowdSettings.enabled and A.Crowd ~= nil then
+                local crowd = A.Crowd.scan(actor, shell, now)
+                if crowd.count >= (tonumber(crowdSettings.gateCount) or 3) then
+                    A.metrics.crowdRefused = A.metrics.crowdRefused + 1
+                    return choice, facts
+                end
+            end
             local Caution = a.Caution
             if Caution ~= nil and type(Caution.zombieMode) == "function" then
                 local okMode, mode = pcall(Caution.zombieMode, actor)
@@ -83,6 +112,7 @@ function H.installEngagement(a)
             A.metrics.reactiveCommits = A.metrics.reactiveCommits + 1
             memory.engagementDecision, memory.engagementReason = "commit", reason
             memory.alrReactAtMs = now
+            A.say(actor, shell, "spot", A.settings.lines.spotCooldownMs)
             if A.settings.debug then A.log("commit", tostring(actor.uid), why) end
             return "commit", facts
         end
