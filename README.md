@@ -67,6 +67,16 @@ Edit and restart. `enabled = false` turns the add-on off; `draw.scale = 1` resto
   not learn that it is being bitten. Planned for phase 2.
 - Bite stagger (0.5 s) and the zombies' own behaviour are untouched.
 
+## How it works (for modders)
+
+A-Life decides what to do about a zombie in a public function, `ProjectALife.DecisionLoop.engagement`. The add-on
+wraps it and turns the verdict "bypass / continue_mission" into "commit" when the zombie is close and coming (the
+verdict "defend" is not used on purpose: a defend-on-travel combat state ends at the next tick as soon as the zombie
+is more than 1.5 tiles away). Retreat leases, ignore timers and the weapon-draw durations are capped by wrapping
+three more public functions. The timings live in A-Life's public settings tables (`BehaviorSettings`,
+`Combat.settings`, `Endurance.settings`, the decision-loop lanes, ZombieFocus, Fear, Caution); the add-on writes its
+numbers there and again after `DecisionLoop.configure`, which rebuilds them at game start. No A-Life file is modified.
+
 ## Source and tests
 
 - `42/media/lua/` — the mod (4 Lua files, global table `ALifeReactive`).
