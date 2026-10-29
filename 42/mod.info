@@ -1,0 +1,8 @@
+name=A-Life: Reactive Survivors
+id=ALifeReactiveSurvivors
+author=druid
+modversion=0.1.0
+versionMin=42.20.0
+require=ProjectALifeNPCs
+loadModAfter=ProjectALifeNPCs
+description=Add-on for Project A-Life [ALIFE NPCS]: NPCs react to zombies sooner. A survivor commits to a zombie that walks at them from up to 6 tiles instead of waiting for the bite, draws the weapon faster, swings sooner, forgets a failed approach quicker and stops avoiding a zombie 8 s after a retreat instead of 25 s. Experimental, private test build. / Аддон к Project A-Life: NPC быстрее реагируют на зомби. Экспериментальная тестовая сборка.
