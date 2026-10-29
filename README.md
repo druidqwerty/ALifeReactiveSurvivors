@@ -1,13 +1,15 @@
-# A-Life: Reactive Survivors [B42] — experimental
+# A-Life: Reactive Survivors [B42] — test version
+
+<p align="center"><img src="docs/preview.png" alt="A-Life: Reactive Survivors" width="320"></p>
 
 An add-on for [Project A-Life [ALIFE NPCS]](https://steamcommunity.com/sharedfiles/filedetails/?id=3803984183) (by Vice):
 NPCs react to zombies sooner and fight back faster. Project A-Life itself is not changed and none of its code is
 copied; this is a separate Lua mod that adjusts A-Life through its public tables and functions.
 
-> **Experimental, not tested in game yet.** v0.1.0 passes an offline simulation test only. It is not on the
-> Steam Workshop; it will go there after a real in-game test. Feedback is welcome in the Issues.
+> **Test version (0.1.0).** It works in our game, but it has not been through a long session yet, and the
+> numbers may still change. Feedback is welcome in the Steam comments or the Issues.
 
-**Source code (MIT):** https://github.com/druidqwerty/ALifeReactiveSurvivors
+**Steam Workshop:** https://steamcommunity.com/sharedfiles/filedetails/?id=3829332775 · **Source code (MIT):** https://github.com/druidqwerty/ALifeReactiveSurvivors
 
 <p align="center"><a href="https://boosty.to/lrgpp"><img src="docs/banner.png" alt="LrgPP mods on Boosty" width="640"></a></p>
 
@@ -40,10 +42,11 @@ Zombies are not changed. In multiplayer the add-on runs where A-Life runs the NP
 ## Requirements and installation
 
 - Project Zomboid Build 42 (42.20+), [Project A-Life [ALIFE NPCS]](https://steamcommunity.com/sharedfiles/filedetails/?id=3803984183).
-- Download the zip from [Releases](https://github.com/druidqwerty/ALifeReactiveSurvivors/releases) and unpack it to
+- Subscribe on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3829332775) and enable
+  "A-Life: Reactive Survivors" after Project A-Life. On a server add `ALifeReactiveSurvivors` to `Mods=`; every player
+  needs the mod.
+- Or without Steam: unpack the zip from [Releases](https://github.com/druidqwerty/ALifeReactiveSurvivors/releases) to
   `%USERPROFILE%\Zomboid\mods\` so that you get `mods\ALifeReactiveSurvivors\42\mod.info`.
-- Enable "A-Life: Reactive Survivors" in the mod list. In co-op every player needs the same folder, and the host adds
-  the mod to the server's mod list.
 
 ## Settings
 
@@ -59,7 +62,7 @@ Edit and restart. `enabled = false` turns the add-on off; `draw.scale = 1` resto
 
 ## Known limitations
 
-- Not tested in game yet.
+- Test version: the numbers may change after longer sessions.
 - Multiplayer: a zombie's bite can be computed on another player's game than the one running the NPC, so the NPC may
   not learn that it is being bitten. Planned for phase 2.
 - Bite stagger (0.5 s) and the zombies' own behaviour are untouched.
@@ -76,7 +79,7 @@ Edit and restart. `enabled = false` turns the add-on off; `draw.scale = 1` resto
 - [Tripping Zombies MP Fix](https://steamcommunity.com/sharedfiles/filedetails/?id=3829034899) — the same Tripping Zombies trips for every player.
 - [Wandering Hordes Performance Fix](https://steamcommunity.com/sharedfiles/filedetails/?id=3829140377) — no save freezes and no client lag from Wandering Hordes.
 - [Download Unstuck](https://steamcommunity.com/sharedfiles/filedetails/?id=3829163351) — un-sticks the Workshop download when hosting from the menu.
-- **A-Life: Reactive Survivors** — A-Life NPCs react to zombies sooner (this mod, experimental).
+- **A-Life: Reactive Survivors** — A-Life NPCs fight back before the bite (this mod, test version).
 
 ## Credits and license
 

@@ -1,13 +1,15 @@
-# A-Life: Reactive Survivors [B42] — экспериментальная версия
+# A-Life: Reactive Survivors [B42] — тестовая версия
+
+<p align="center"><img src="docs/preview.png" alt="A-Life: Reactive Survivors" width="320"></p>
 
 Дополнение к [Project A-Life [ALIFE NPCS]](https://steamcommunity.com/sharedfiles/filedetails/?id=3803984183) (автор Vice):
 NPC раньше замечают зомби и быстрее отбиваются. Сам Project A-Life не меняется, его код не копируется; это отдельный
 мод на Lua, который подстраивает A-Life через его публичные таблицы и функции.
 
-> **Экспериментальная версия, в игре ещё не проверялась.** v0.1.0 прошла только офлайн-тест в симуляции. В мастерской
-> Steam её нет: она появится там после настоящей проверки в игре. Отзывы — в Issues.
+> **Тестовая версия (0.1.0).** В нашей игре работает, но долгой сессии ещё не было, и числа могут поменяться.
+> Отзывы — в комментариях Steam или в Issues.
 
-**Исходный код (MIT):** https://github.com/druidqwerty/ALifeReactiveSurvivors
+**Мастерская Steam:** https://steamcommunity.com/sharedfiles/filedetails/?id=3829332775 · **Исходный код (MIT):** https://github.com/druidqwerty/ALifeReactiveSurvivors
 
 <p align="center"><a href="https://boosty.to/lrgpp"><img src="docs/banner.png" alt="Моды LrgPP на Boosty" width="640"></a></p>
 
@@ -39,10 +41,11 @@ English version: [README.md](README.md)
 ## Требования и установка
 
 - Project Zomboid Build 42 (42.20+), [Project A-Life [ALIFE NPCS]](https://steamcommunity.com/sharedfiles/filedetails/?id=3803984183).
-- Скачайте zip из [Releases](https://github.com/druidqwerty/ALifeReactiveSurvivors/releases) и распакуйте в
+- Подпишитесь в [мастерской Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=3829332775) и включите
+  «A-Life: Reactive Survivors» после Project A-Life. На сервере добавьте `ALifeReactiveSurvivors` в `Mods=`; мод нужен
+  каждому игроку.
+- Или без Steam: распакуйте zip из [Releases](https://github.com/druidqwerty/ALifeReactiveSurvivors/releases) в
   `%USERPROFILE%\Zomboid\mods\`, чтобы получилось `mods\ALifeReactiveSurvivors\42\mod.info`.
-- Включите «A-Life: Reactive Survivors» в списке модов. В кооперативе папка нужна каждому игроку, а хост добавляет мод
-  в список модов сервера.
 
 ## Настройки
 
@@ -59,7 +62,7 @@ English version: [README.md](README.md)
 
 ## Известные ограничения
 
-- В игре ещё не проверялся.
+- Тестовая версия: после долгих сессий числа могут поменяться.
 - Мультиплеер: укус зомби может считаться в игре другого игрока, а не там, где ведётся NPC, и NPC может не узнать, что
   его кусают. Запланировано на этап 2.
 - Оглушение от укуса (0,5 с) и поведение самих зомби не меняются.
@@ -76,7 +79,7 @@ English version: [README.md](README.md)
 - [Tripping Zombies MP Fix](https://steamcommunity.com/sharedfiles/filedetails/?id=3829034899) — одинаковые падения Tripping Zombies у всех игроков.
 - [Wandering Hordes Performance Fix](https://steamcommunity.com/sharedfiles/filedetails/?id=3829140377) — без подвисаний сохранения и лагов клиента из-за Wandering Hordes.
 - [Download Unstuck](https://steamcommunity.com/sharedfiles/filedetails/?id=3829163351) — лечит зависание загрузки мастерской при запуске своего сервера.
-- **A-Life: Reactive Survivors** — NPC из A-Life раньше реагируют на зомби (этот мод, экспериментальный).
+- **A-Life: Reactive Survivors** — NPC из A-Life отбиваются до укуса (этот мод, тестовая версия).
 
 ## Авторы и лицензия
 
