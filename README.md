@@ -130,6 +130,9 @@ because a freshly hit NPC is kept quiet for five seconds. No A-Life file is modi
 
 ## Changelog
 
+- **0.2.1** (2026-10-31): fixed vehicle scanning for Build 42.21 — `IsoCell.getVehicles()` returns a Java Set,
+  so the mod now iterates it instead of calling the nonexistent `get(index)`. Stops repeated `ALR_Vehicles.lua`
+  "Object tried to call nil" errors.
 - **0.2.0** (2026-10-29, test version, Steam + GitHub): ladders for groups of zombies and for vehicles,
   unarmed NPCs stay out, speech lines in English and Russian, reactions to a bite and to being hit by a car; settings
   moved to `01_ALR_Settings.lua`.

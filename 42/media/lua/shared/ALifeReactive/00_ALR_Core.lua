@@ -7,7 +7,7 @@ ALifeReactive = ALifeReactive or {}
 local A = ALifeReactive
 
 A.MOD_ID = "ALifeReactiveSurvivors"
-A.VERSION = "0.2.0"
+A.VERSION = "0.2.1"
 A.TAG = "[ALR]"
 A.settings = A.settings or {}
 

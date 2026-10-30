@@ -35,10 +35,12 @@ function V.refresh(now)
     local ok, err = pcall(function()
         local cell = type(getCell) == "function" and getCell() or nil
         local list = cell ~= nil and cell:getVehicles() or nil
-        if list == nil or list.size == nil then return end
+        if list == nil or list.iterator == nil then return end
         local minimum = tonumber(s.minKmh) or 6
-        for index = 0, list:size() - 1 do
-            local vehicle = list:get(index)
+        -- Build 42.21 returns a Java Set here: size()/iterator(), no get(index).
+        local iterator = list:iterator()
+        while iterator:hasNext() do
+            local vehicle = iterator:next()
             if vehicle ~= nil then
                 local speed = kmh(vehicle)
                 if math.abs(speed) >= minimum then

@@ -47,7 +47,15 @@ local function body(class, x, y, z, extra)
     return object
 end
 VEHICLES = {}
-local vehicleList = { size = function() return #VEHICLES end, get = function(_, i) return VEHICLES[i + 1] end }
+local vehicleList = {
+    size = function() return #VEHICLES end,
+    -- PZ 42.21 IsoCell.getVehicles() is a Java Set, not an indexable list.
+    iterator = function()
+        local index = 0
+        return { hasNext = function() return index < #VEHICLES end,
+            next = function() index = index + 1 return VEHICLES[index] end }
+    end,
+}
 ROOM = nil
 local shell = body("IsoZombie", 100, 100, 0, {
     getSquare = function() return { getRoom = function() return ROOM end } end,

@@ -1,7 +1,7 @@
 name=A-Life: Reactive Survivors
 id=ALifeReactiveSurvivors
 author=druid
-modversion=0.2.0
+modversion=0.2.1
 versionMin=42.20.0
 poster=poster.png
 icon=icon.png
