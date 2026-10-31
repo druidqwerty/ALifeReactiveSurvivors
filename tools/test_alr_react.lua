@@ -130,6 +130,8 @@ end
 local function eq(name, got, want) check(name, got == want, tostring(got) .. " ~= " .. tostring(want)) end
 
 Events.OnGameStart.fire()
+-- Legacy behavior remains opt-out; new planner has its own scenario suite.
+A.settings.crowd.safeRetreat = false
 check("installed", A.Boot.installed)
 check("gunfear wrapped", A.wrapped["ModuleGunFear.interrupt"] ~= nil)
 check("noteAttacker wrapped", A.wrapped["Perception.noteAttacker"] ~= nil)

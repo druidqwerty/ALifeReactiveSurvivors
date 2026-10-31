@@ -7,9 +7,9 @@ NPCs react to the world sooner. They attack a zombie before it bites, run from a
 vehicles, and say what they do (English and Russian). Project A-Life itself is not changed and none of its code is
 copied; this is a separate Lua mod that adjusts A-Life through its public tables and functions.
 
-> **Test version.** 0.2.0 (groups, vehicles, lines) is on the Steam Workshop for players to test: it has passed the
-> simulation tests, but not a long game session yet, and the numbers may change. Please report bugs (what the NPC did
-> + your `Zomboid/console.txt`) in the Steam comments or the Issues.
+> **Test version 0.3.0.** Safe local crowd retreat and live world settings. All 702 simulation assertions pass.
+> A controlled real-game SP scenario verified the crowd interrupt, obstacle avoidance, 7.24 tiles of actual NPC
+> movement and live settings changes. This is not a long-session or multiplayer-handoff certification.
 
 **Steam Workshop:** https://steamcommunity.com/sharedfiles/filedetails/?id=3829332775 · **Source code (MIT):** https://github.com/druidqwerty/ALifeReactiveSurvivors
 
@@ -44,10 +44,12 @@ Every situation is a ladder: the first rung that fits decides; whatever the add-
 **A group of zombies** (idea from the Steam comments)
 1. Three or more zombies within 6 tiles: no early attack. A-Life decides at contact and withdraws when outnumbered,
    as before.
-2. Three or more within 6 tiles and at least two walking at the NPC: the NPC runs 8 tiles away from the group
-   ("Too many of them!") and tells its squad where the zombies are.
-3. If an ally is within 20 tiles and not behind the group (an NPC of the same side or a friendly player), it runs to
-   the ally instead ("Over here! Help!").
+2. Three or more within 6 tiles and at least two walking at the NPC: it evaluates up to 11 short escape routes,
+   normally up to 8 tiles long. It avoids known zombies along the route and at the destination, blocked/fenced
+   crossings, fire, campfires, water, missing floor and unloaded squares, including unsafe diagonal corners.
+3. A same-side NPC or friendly player within 20 tiles can influence the destination, but cannot override safety.
+   Routes stay outdoors or within the current building. If no route is validated, ALR does not force movement;
+   the original A-Life decision continues. Nearby zombies are heard; farther ones must be visible.
 4. At most three such runs a minute. Guards on a leash, NPCs with orders and NPCs holding a post never leave it.
 
 **A vehicle** (heard; no sight check)
@@ -81,14 +83,15 @@ In multiplayer the add-on runs where A-Life runs the NPC (on the players' games)
 
 ## Settings
 
-All numbers are in `42/media/lua/shared/ALifeReactive/01_ALR_Settings.lua`, each with A-Life's own value next to it.
-Edit and restart. `enabled = false` turns the add-on off; `crowd.enabled`, `vehicle.enabled` and `lines.enabled`
-switch one ladder or the speech off; `draw.scale = 1` restores the normal draw animation. The lines themselves are in
-`42/media/lua/shared/Translate/EN/IG_UI.json` and `RU/IG_UI.json`.
+All 66 settings are global world/server Sandbox options on **A-Life: Reactive Survivors**. Set them when hosting;
+an admin can change the running world's Sandbox options. Changes apply within two seconds without a restart.
+They are not duplicated in personal ModOptions. Old saves receive the defaults for missing options.
+**Safe crowd retreat** is on by default; switching it off restores the older geometric retreat. The master toggle
+can disable/re-enable the add-on live, including restoring tuning values that ALR still owns.
 
 ## Is it working?
 
-- `console.txt` shows `[ALR] v0.2.0 installed` and `[ALR] tuning re-applied after Decisions.configure`.
+- `console.txt` shows `[ALR] v0.3.0 installed`.
 - Every minute (when something changed): `[ALR] checks=.. commits=.. dodges=.. dives=.. fallbacks=.. regroups=..
   bites=.. hits=.. lines=..`. `commits` grows when an NPC attacked a zombie earlier than A-Life would have,
   `dodges` / `dives` when it jumped out of a car's way, `fallbacks` / `regroups` when it ran from a group.
@@ -96,7 +99,10 @@ switch one ladder or the speech off; `draw.scale = 1` restores the normal draw a
 
 ## Known limitations
 
-- Test version: 0.2.0's group and vehicle ladders have been through the simulation tests only; the numbers may change.
+- Local retreat only, not a global navigator or guaranteed escape. Search work is bounded; exhausted budgets leave
+  the original A-Life decision in control. Crowd thresholds, combat decisions, guard posts and orders are unchanged.
+- The new planner does not alter vehicle-dodge paths or add combat-state dodging. Multiplayer ownership handoffs
+  and long sessions with large mod packs still need broader coverage; simulation is not a substitute for that.
 - Vehicles are not dodged while the NPC is fighting, and only vehicles on the NPC's floor count.
 - Multiplayer: a zombie's bite can be computed on another player's game than the one running the NPC, so the NPC may
   not learn that it is being bitten. Planned for a later version.
@@ -122,14 +128,18 @@ because a freshly hit NPC is kept quiet for five seconds. No A-Life file is modi
 
 ## Source and tests
 
-- `42/media/lua/` — the mod (10 Lua files, global table `ALifeReactive`).
+- `42/media/lua/` — the mod (global table `ALifeReactive`).
 - `tools/run_test.py` — simulation tests with stubbed A-Life tables (Python + [lupa](https://pypi.org/project/lupa/)):
-  `python tools/run_test.py` → `RESULT passed=63 failed=0`, `RESULT passed=60 failed=0`, plus a check that every line
-  exists in both languages.
+  `python tools/run_test.py` → 702 assertions (63 original + 60 reactions + 31 retreat + 548 settings/schema),
+  plus the speech catalog EN/RU key check.
+- `tools/livetest/` — isolated real-game scenario, separate from the mod ZIP and from user saves.
+- [0.3.0 verification scope and results](docs/TEST_0.3.0.md).
 - `tools/make_art.py` — poster, icon and preview.
 
 ## Changelog
 
+- **0.3.0** (2026-10-31): safe local crowd retreat; no unchecked ALR fallback when all routes fail;
+  all settings moved to live global Sandbox options, reversible tuning, EN/RU settings text.
 - **0.2.1** (2026-10-31): fixed vehicle scanning for Build 42.21 — `IsoCell.getVehicles()` returns a Java Set,
   so the mod now iterates it instead of calling the nonexistent `get(index)`. Stops repeated `ALR_Vehicles.lua`
   "Object tried to call nil" errors.
@@ -145,6 +155,7 @@ because a freshly hit NPC is kept quiet for five seconds. No A-Life file is modi
 - [Tripping Zombies MP Fix](https://steamcommunity.com/sharedfiles/filedetails/?id=3829034899) — the same Tripping Zombies trips for every player.
 - [Wandering Hordes Performance Fix](https://steamcommunity.com/sharedfiles/filedetails/?id=3829140377) — no save freezes and no client lag from Wandering Hordes.
 - [Download Unstuck](https://steamcommunity.com/sharedfiles/filedetails/?id=3829163351) — un-sticks the Workshop download when hosting from the menu.
+- [A-Life: Caravans](https://steamcommunity.com/sharedfiles/filedetails/?id=3829571361) — faction convoys and roadside encounters.
 - **A-Life: Reactive Survivors** — A-Life NPCs fight back before the bite (this mod, test version).
 
 ## Credits and license

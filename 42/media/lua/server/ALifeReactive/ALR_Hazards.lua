@@ -8,6 +8,7 @@ require "ALifeReactive/00_ALR_Core"
 require "ALifeReactive/02_ALR_Lines"
 require "ALifeReactive/ALR_Vehicles"
 require "ALifeReactive/ALR_Crowd"
+require "ALifeReactive/ALR_Retreat"
 
 local A = ALifeReactive
 local H = { installed = false, nextVehicleMs = {}, nextCrowdMs = {}, legs = {} }
@@ -139,12 +140,17 @@ function H.crowd(actor, shell, state, now, helpers)
     end
     if legs.count >= (tonumber(s.legsPerMinute) or 3) then return nil end
     local ally = A.Crowd.ally(actor, shell, now, tonumber(s.regroupTiles) or 20)
-    local target, kind = A.Crowd.fallbackPoint(shell, crowd, ally, tonumber(s.fallbackTiles) or 8)
+    local target, kind
+    if s.safeRetreat ~= false then
+        target, kind = A.Retreat.choose(actor, shell, crowd, ally, now)
+    else
+        target, kind = A.Crowd.fallbackPoint(shell, crowd, ally, tonumber(s.fallbackTiles) or 8)
+    end
     if target == nil then return nil end
     local moved = move(helpers, actor, shell, target, kind == "regroup" and "alr_regroup" or "alr_fallback",
         { activity = "moving", pace = "run", timeoutMs = tonumber(s.timeoutMs) or 4500, cautionSkip = true,
             threat = crowd.nearest, threatKind = "zombie" })
-    if moved == nil and type(helpers) == "table" and type(helpers.startRetreat) == "function"
+    if moved == nil and s.safeRetreat == false and type(helpers) == "table" and type(helpers.startRetreat) == "function"
             and crowd.nearest ~= nil then
         local ok, retreat = pcall(helpers.startRetreat, actor, shell, crowd.nearest, "zombie", now, "alr_crowd")
         if ok then moved = retreat end

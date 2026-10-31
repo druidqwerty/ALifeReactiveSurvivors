@@ -5,13 +5,14 @@
 require "ALifeReactive/00_ALR_Core"
 require "ALifeReactive/01_ALR_Settings"
 require "ALifeReactive/02_ALR_Lines"
+require "ALifeReactive/03_ALR_Sandbox"
 require "ALifeReactive/ALR_Tuning"
 require "ALifeReactive/ALR_Hooks"
 require "ALifeReactive/ALR_Hazards"
 require "ALifeReactive/ALR_Reactions"
 
 local A = ALifeReactive
-local B = { installed = false, tries = 0, lastReport = nil, minute = 0 }
+local B = { installed = false, tries = 0, lastReport = nil, minute = 0, lastSettingsMs = nil }
 A.Boot = B
 
 local function side()
@@ -31,13 +32,13 @@ function B.install()
         return false
     end
     B.installed = true
-    if not A.settings.enabled then
-        A.log("disabled in settings")
-        return true
-    end
     local ok, err = pcall(function()
+        A.Sandbox.refresh()
+        B.lastSettingsMs = A.now()
         A.Tuning.hookConfigure(a)
         A.Tuning.apply(a)
+        -- Wrappers check enabled at call time. Install even when initially
+        -- disabled so an admin can enable the mod without reloading the world.
         A.Hooks.install(a)
         A.Hazards.install(a)
         A.Reactions.install(a)
@@ -48,6 +49,22 @@ function B.install()
         return true
     end
     A.log("v" .. A.VERSION .. " installed (" .. side() .. ")")
+    return true
+end
+
+function B.pollSettings(now)
+    if not B.installed then return false end
+    now = tonumber(now) or A.now()
+    local last = B.lastSettingsMs
+    if last ~= nil and now >= last and now - last < A.Sandbox.pollMs then return false end
+    B.lastSettingsMs = now
+    local changed, tuningChanged, enabledChanged = A.Sandbox.refresh()
+    if not changed then return false end
+    if enabledChanged or tuningChanged then A.Tuning.apply(ProjectALife) end
+    if enabledChanged and not A.settings.enabled and A.Reactions ~= nil then
+        A.Reactions.pending = {}
+    end
+    if A.settings.debug then A.log("world settings updated; enabled=" .. tostring(A.settings.enabled)) end
     return true
 end
 
@@ -84,10 +101,13 @@ if not A.bootRegistered then
         if B.installed or B.tries > 600 then remove("OnTick", tick) end
     end
     add("OnTick", tick)
-    -- Delayed lines ("you hit me!" a moment after the pain bark).
+    -- Shared world settings and delayed lines use the existing persistent tick.
     add("OnTick", function()
+        local now = A.now()
+        local ok, err = pcall(B.pollSettings, now)
+        if not ok then A.fail("sandbox refresh", err) end
         if B.installed and A.Reactions ~= nil and #A.Reactions.pending > 0 then
-            pcall(A.Reactions.flush, A.now())
+            pcall(A.Reactions.flush, now)
         end
     end)
     add("EveryOneMinute", function() pcall(B.report) end)

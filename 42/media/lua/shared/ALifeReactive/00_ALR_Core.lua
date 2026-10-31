@@ -7,7 +7,7 @@ ALifeReactive = ALifeReactive or {}
 local A = ALifeReactive
 
 A.MOD_ID = "ALifeReactiveSurvivors"
-A.VERSION = "0.2.1"
+A.VERSION = "0.3.0"
 A.TAG = "[ALR]"
 A.settings = A.settings or {}
 
@@ -15,6 +15,7 @@ A.metrics = {
     reactiveChecks = 0, reactiveCommits = 0, reactiveRefused = 0, crowdRefused = 0, unarmedRefused = 0,
     leaseCaps = 0, ignoreCaps = 0, draws = 0, configures = 0, errors = 0,
     dodges = 0, dives = 0, courtesies = 0, fallbacks = 0, regroups = 0, bites = 0, hits = 0, lines = 0,
+    safeRetreatChecks = 0, safeRetreatRefused = 0,
 }
 
 -- uid -> shell, as seen by our hooks (weak values).
@@ -106,6 +107,7 @@ function A.counters()
         .. " dodges=" .. m.dodges .. " dives=" .. m.dives .. " stepAside=" .. m.courtesies
         .. " fallbacks=" .. m.fallbacks .. " regroups=" .. m.regroups .. " bites=" .. m.bites .. " hits=" .. m.hits
         .. " lines=" .. m.lines .. " leaseCaps=" .. m.leaseCaps .. " ignoreCaps=" .. m.ignoreCaps
+        .. " safeChecks=" .. m.safeRetreatChecks .. " noSafeRoute=" .. m.safeRetreatRefused
         .. " draws=" .. m.draws .. " configures=" .. m.configures .. " errors=" .. m.errors
 end
 

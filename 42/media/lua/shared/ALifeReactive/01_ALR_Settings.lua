@@ -1,5 +1,6 @@
--- A-Life: Reactive Survivors - every knob. Edit, then restart the game (or the
--- host). "base" = the value Project A-Life 1.4.6 uses on its own.
+-- A-Life: Reactive Survivors - shipped defaults. Change these options in the
+-- world's Sandbox settings; 03_ALR_Sandbox applies synchronized changes live.
+-- "base" = the value Project A-Life 1.4.6 uses on its own.
 
 require "ALifeReactive/00_ALR_Core"
 
@@ -19,7 +20,7 @@ A.settings = {
     -- contact). fallbackCount zombies within radius, fallbackClosing of them
     -- walking at the NPC: run fallbackTiles away from the group, or to an ally
     -- (NPC of the same side, or a friendly player) within regroupTiles.
-    crowd = { enabled = true, radius = 6, gateCount = 3, fallbackCount = 3, fallbackClosing = 2,
+    crowd = { enabled = true, safeRetreat = true, radius = 6, gateCount = 3, fallbackCount = 3, fallbackClosing = 2,
         fallbackTiles = 8, regroupTiles = 20, cooldownMs = 6000, legsPerMinute = 3, timeoutMs = 4500 },
 
     -- Vehicles (heard, no sight check). A vehicle faster than minKmh within

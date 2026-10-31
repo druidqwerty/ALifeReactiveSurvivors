@@ -8,7 +8,7 @@ local A = ALifeReactive
 local C = {}
 A.Crowd = C
 
-local function bodiesNear(perception, now, sx, sy, radius)
+local function bodiesNear(perception, now, sx, sy, radius, limit)
     local snapshot = perception.snapshotFor(now)
     local bodies = type(snapshot) == "table" and snapshot.bodies or nil
     if type(bodies) ~= "table" then return {} end
@@ -25,7 +25,10 @@ local function bodiesNear(perception, now, sx, sy, radius)
                 if list ~= nil then
                     for _, index in ipairs(list) do
                         local row = bodies[index]
-                        if row ~= nil and (row.x - sx) ^ 2 + (row.y - sy) ^ 2 <= r2 then out[#out + 1] = row end
+                        if row ~= nil and (row.x - sx) ^ 2 + (row.y - sy) ^ 2 <= r2 then
+                            out[#out + 1] = row
+                            if limit and #out >= limit then return out end
+                        end
                     end
                 end
             end
@@ -33,10 +36,14 @@ local function bodiesNear(perception, now, sx, sy, radius)
         return out
     end
     for _, row in ipairs(bodies) do
-        if (row.x - sx) ^ 2 + (row.y - sy) ^ 2 <= r2 then out[#out + 1] = row end
+        if (row.x - sx) ^ 2 + (row.y - sy) ^ 2 <= r2 then
+            out[#out + 1] = row
+            if limit and #out >= limit then return out end
+        end
     end
     return out
 end
+C.rowsNear = bodiesNear
 
 -- Zombies within settings.crowd.radius on the shell's floor: count, how many
 -- walk at the shell, their centroid and the nearest one.

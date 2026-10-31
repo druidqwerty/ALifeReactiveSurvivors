@@ -15,3 +15,8 @@ Thumbs.db
 # Logs
 *.log
 console.txt
+
+# Isolated game profiles include saves and installed third-party mods.
+tools/livetest/runs/
+tools/livetest/current.json
+tools/livetest/harness/42/media/java/
