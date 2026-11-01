@@ -19,6 +19,7 @@ L.catalog = {
     crowd = { count = 3 },
     regroup = { count = 2 },
     unarmed = { count = 2 },
+    make_space = { count = 2 },
     vehicle_slow = { count = 2 },
     vehicle_dodge = { count = 3 },
     vehicle_dive = { count = 3 },

@@ -47,6 +47,7 @@ def main():
     failed += run("test_alr_react.lua", en) or 0
     failed += run("test_alr_retreat.lua", en) or 0
     failed += run("test_alr_settings.lua", en) or 0
+    failed += run("test_alr_awareness.lua", en) or 0
     # every catalog key has a translation
     lua = lupa.LuaRuntime()
     lua.globals().MOD_ROOT = MOD_ROOT

@@ -17,6 +17,8 @@ Thumbs.db
 console.txt
 
 # Isolated game profiles include saves and installed third-party mods.
+# Private launchers/configuration stay local; public observers are tools/ALR_*.lua.
+/tools/livetest/
 tools/livetest/runs/
 tools/livetest/current.json
 tools/livetest/harness/42/media/java/

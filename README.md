@@ -1,4 +1,8 @@
-# A-Life: Reactive Survivors [B42] — test version
+# A-Life: Reactive Survivors [B42]
+
+<p align="center"><a href="https://boosty.to/lrgpp"><img src="docs/banner.png" alt="LrgPP mods on Boosty" width="640"></a></p>
+
+Free and open source. The code is written by an AI; the direction, the testing and the time are mine. If the mod made your game better: [support on Boosty](https://boosty.to/lrgpp).
 
 <p align="center"><img src="docs/preview.png" alt="A-Life: Reactive Survivors" width="320"></p>
 
@@ -7,15 +11,9 @@ NPCs react to the world sooner. They attack a zombie before it bites, run from a
 vehicles, and say what they do (English and Russian). Project A-Life itself is not changed and none of its code is
 copied; this is a separate Lua mod that adjusts A-Life through its public tables and functions.
 
-> **Test version 0.3.0.** Safe local crowd retreat and live world settings. All 702 simulation assertions pass.
-> A controlled real-game SP scenario verified the crowd interrupt, obstacle avoidance, 7.24 tiles of actual NPC
-> movement and live settings changes. This is not a long-session or multiplayer-handoff certification.
+> **0.4.0 — awareness before contact.** Idle/recovering NPCs react to visible approaching zombies; armed survivors can engage, while unarmed/tired survivors choose a short checked escape. Fixed A-Life cancelling the newly created reaction action. [Verification and limits](docs/TEST_0.4.0.md).
 
 **Steam Workshop:** https://steamcommunity.com/sharedfiles/filedetails/?id=3829332775 · **Source code (MIT):** https://github.com/druidqwerty/ALifeReactiveSurvivors
-
-<p align="center"><a href="https://boosty.to/lrgpp"><img src="docs/banner.png" alt="LrgPP mods on Boosty" width="640"></a></p>
-
-Free and open source. The code is written by an AI; the direction, the testing and the time are mine. If the mod made your game better: [support on Boosty](https://boosty.to/lrgpp).
 
 Русская версия: [README_RU.md](README_RU.md)
 
@@ -35,11 +33,8 @@ And nothing in A-Life looks at vehicles: a survivor on the road stands there unt
 Every situation is a ladder: the first rung that fits decides; whatever the add-on does not touch stays A-Life's.
 
 **A lone zombie**
-1. Within 6 tiles, walking at the NPC and in sight, or any zombie within 2.5 tiles: the NPC attacks it instead of
-   ignoring it until contact ("Got one coming."). A-Life alone waits until the zombie is 1.5 tiles away.
-2. An unarmed NPC does not go in early ("I've got nothing to fight with!"); A-Life shoves at contact as before.
-3. Retreating or recovering NPCs, the "avoid zombies" mode and the gun discipline (a gun user without a melee
-   weapon) keep A-Life's own decision.
+
+Within the existing reaction radius (default 6 tiles), a visible closing/targeting zombie can alert an idle NPC before contact. A ready armed NPC asks A-Life to engage. Unarmed, tired or avoiding NPCs can take a checked short step up to 3 tiles away instead. A tighter arrival radius keeps short fallback steps from completing almost in place. A blocked escape is refused. Existing conversations, orders, guard leashes, passengers and gun fear retain priority; busy NPCs are not made to wander randomly.
 
 **A group of zombies** (idea from the Steam comments)
 1. Three or more zombies within 6 tiles: no early attack. A-Life decides at contact and withdraws when outnumbered,
@@ -74,6 +69,7 @@ In multiplayer the add-on runs where A-Life runs the NPC (on the players' games)
 
 ## Requirements and installation
 
+- [ZombieBuddy](https://steamcommunity.com/sharedfiles/filedetails/?id=3619862853) must be installed as required by A-Life. [Jeem Extension](https://steamcommunity.com/sharedfiles/filedetails/?id=3806944055) is optional, but recommended for the full experience; its tuning integration is not a hard mod.info dependency.
 - Project Zomboid Build 42 (42.20+), [Project A-Life [ALIFE NPCS]](https://steamcommunity.com/sharedfiles/filedetails/?id=3803984183).
 - Subscribe on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3829332775) and enable
   "A-Life: Reactive Survivors" after Project A-Life. On a server add `ALifeReactiveSurvivors` to `Mods=` (after
@@ -91,7 +87,7 @@ can disable/re-enable the add-on live, including restoring tuning values that AL
 
 ## Is it working?
 
-- `console.txt` shows `[ALR] v0.3.0 installed`.
+- `console.txt` shows `[ALR] v0.4.0 installed`.
 - Every minute (when something changed): `[ALR] checks=.. commits=.. dodges=.. dives=.. fallbacks=.. regroups=..
   bites=.. hits=.. lines=..`. `commits` grows when an NPC attacked a zombie earlier than A-Life would have,
   `dodges` / `dives` when it jumped out of a car's way, `fallbacks` / `regroups` when it ran from a group.
@@ -107,6 +103,8 @@ can disable/re-enable the add-on live, including restoring tuning values that AL
 - Multiplayer: a zombie's bite can be computed on another player's game than the one running the NPC, so the NPC may
   not learn that it is being bitten. Planned for a later version.
 - Bite stagger (0.5 s) and the zombies' own behaviour are untouched.
+- The add-on cannot react for an A-Life NPC whose physical replica never arrives on the owning client.
+  One post-death test fixture hit upstream `replica_missing`/body-recovery failures; this release does not fix that replication subsystem.
 
 ## How it works (for modders)
 
@@ -130,13 +128,15 @@ because a freshly hit NPC is kept quiet for five seconds. No A-Life file is modi
 
 - `42/media/lua/` — the mod (global table `ALifeReactive`).
 - `tools/run_test.py` — simulation tests with stubbed A-Life tables (Python + [lupa](https://pypi.org/project/lupa/)):
-  `python tools/run_test.py` → 702 assertions (63 original + 60 reactions + 31 retreat + 548 settings/schema),
+  `python tools/run_test.py` → 743 assertions (including 41 awareness/action-handoff/startup checks),
   plus the speech catalog EN/RU key check.
-- `tools/livetest/` — isolated real-game scenario, separate from the mod ZIP and from user saves.
-- [0.3.0 verification scope and results](docs/TEST_0.3.0.md).
+- `tools/ALR_AwarenessLive.lua` and `tools/ALR_AwarenessMP*.lua` — real-game SP/two-client observers for isolated test worlds; not part of the mod runtime.
+- [0.4.0 verification scope and results](docs/TEST_0.4.0.md).
 - `tools/make_art.py` — poster, icon and preview.
 
 ## Changelog
+
+- **0.4.0** (2026-11-01): early passive awareness, checked short make-space steps, exact action handoff so A-Life does not immediately cancel ALR movement; corpse/NPC threat filtering and retryable bootstrap.
 
 - **0.3.0** (2026-10-31): safe local crowd retreat; no unchecked ALR fallback when all routes fail;
   all settings moved to live global Sandbox options, reversible tuning, EN/RU settings text.
@@ -156,7 +156,7 @@ because a freshly hit NPC is kept quiet for five seconds. No A-Life file is modi
 - [Wandering Hordes Performance Fix](https://steamcommunity.com/sharedfiles/filedetails/?id=3829140377) — no save freezes and no client lag from Wandering Hordes.
 - [Download Unstuck](https://steamcommunity.com/sharedfiles/filedetails/?id=3829163351) — un-sticks the Workshop download when hosting from the menu.
 - [A-Life: Caravans](https://steamcommunity.com/sharedfiles/filedetails/?id=3829571361) — faction convoys and roadside encounters.
-- **A-Life: Reactive Survivors** — A-Life NPCs fight back before the bite (this mod, test version).
+- **A-Life: Reactive Survivors** — A-Life NPCs fight back before the bite (this mod).
 
 ## Credits and license
 

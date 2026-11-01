@@ -60,7 +60,10 @@ function C.scan(actor, shell, now)
     end
     local sumx, sumy = 0, 0
     for _, row in ipairs(rows) do
-        if math.abs((row.z or sz) - sz) < 0.5 then
+        local body = row.body
+        local dead = body and type(body.isDead) == "function" and body:isDead()
+        local data = body and type(body.getModData) == "function" and body:getModData()
+        if body and not dead and not (data and data.ProjectALifeOwned) and math.abs((row.z or sz) - sz) < 0.5 then
             result.count = result.count + 1
             sumx, sumy = sumx + row.x, sumy + row.y
             local d2 = (row.x - sx) ^ 2 + (row.y - sy) ^ 2

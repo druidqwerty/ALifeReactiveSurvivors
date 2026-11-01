@@ -21,5 +21,7 @@
     "IGUI_ALR_vehicle_hit_2": "Ow! Watch where you're going!",
     "IGUI_ALR_vehicle_hit_again_1": "Do that again and we have a problem.",
     "IGUI_ALR_bitten_1": "Get off me!",
-    "IGUI_ALR_bitten_2": "It's got me!"
+    "IGUI_ALR_bitten_2": "It's got me!",
+    "IGUI_ALR_make_space_1": "Too close. Making some room.",
+    "IGUI_ALR_make_space_2": "Backing off. Watch that side!"
 }

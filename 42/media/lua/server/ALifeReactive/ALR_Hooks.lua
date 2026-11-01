@@ -188,12 +188,12 @@ function H.install(a)
     if type(a) ~= "table" or a.DecisionLoop == nil or a.Perception == nil or a.Combat == nil then
         return false
     end
-    H.installed = true
     H.installEngagement(a)
     H.installLease(a)
     H.installIgnore(a)
     H.installDraw(a)
     H.installFocus(a)
+    H.installed = true
     return true
 end
 

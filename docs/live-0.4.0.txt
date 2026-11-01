@@ -1,0 +1,47 @@
+Scenario-only evidence; isolated cold MP053850; no production hotpatches.
+
+
+## Reactive server
+PASS natural owner-client make-space before contact, actual action movement and other-client replication
+installed
+SPAWN palife:1793500855542:1
+OWNING CLIENT admin real zombie=30645
+admin PASS owner natural reaction at 5.739079263456493 tiles; actual make-space movement=1.028505777731297 action=running
+observer PASS spectator saw original actor move 0.9405594812431309 tiles
+RESULT PASS natural owner-client make-space before contact, actual action movement and other-client replication
+
+
+## Reactive primary client
+PASS owner natural reaction at 5.739079263456493 tiles; actual make-space movement=1.028505777731297 action=running
+installed
+NATURAL intent=alr_make_space distance=5.739079263456493 action=running
+MOVE distance=0 intent=alr_make_space status=running originalAction=running
+MOVE distance=0.272635892528881 intent=alr_make_space status=running originalAction=running
+MOVE distance=0.272635892528881 intent=alr_make_space status=running originalAction=running
+MOVE distance=1.028505777731297 intent=alr_make_space status=running originalAction=running
+RESULT PASS owner natural reaction at 5.739079263456493 tiles; actual make-space movement=1.028505777731297 action=running
+
+
+## Reactive observer client
+PASS spectator saw original actor move 0.9405594812431309 tiles
+installed
+RESULT PASS spectator saw original actor move 0.9405594812431309 tiles
+
+
+## Exact runtime SP053654
+START version=0.4.0
+SPAWN armed uid=palife:1793500697546:1 profile=k93_road_militia_01
+SCENE armed weapon=Base.BaseballBat:zombie.inventory.types.HandWeapon@281daf69
+NATURAL armed state=combat intent=alr_alert threatDistance=4.5399171218365355
+MOVE armed distance=0 intent=alr_alert action=running
+MOVE armed distance=0 intent=alr_alert action=running
+MOVE armed distance=0.6189380398555059 intent=alr_alert action=running
+MOVE armed distance=0.5152966002630677 intent=alr_alert action=running
+MOVE PASS armed displacement=1.0960051040530567 elapsed=2133
+SPAWN unarmed uid=palife:1793500705178:2 profile=k93_road_militia_01
+SCENE unarmed weapon=nil
+NATURAL unarmed state=movement intent=alr_make_space threatDistance=3.4394893091953125
+MOVE unarmed distance=0 intent=alr_make_space action=running
+MOVE unarmed distance=0.6716627628537959 intent=alr_make_space action=running
+MOVE PASS unarmed displacement=1.0498283064203526 elapsed=667
+RESULT PASS natural early engagement and unarmed safe movement before contact

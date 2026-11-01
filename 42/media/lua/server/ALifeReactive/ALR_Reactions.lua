@@ -93,9 +93,9 @@ end
 
 function R.install(a)
     if R.installed then return true end
-    R.installed = true
     if a.Perception ~= nil then R.installBite(a) end
     if a.VehicleRules ~= nil then R.installVehicleHit(a) end
+    R.installed = true
     return true
 end
 

@@ -33,7 +33,7 @@ function R.candidates(origin, crowd, ally, distance)
     return out
 end
 
-function R.choose(actor, shell, crowd, ally, now)
+function R.choose(actor, shell, crowd, ally, now, stepTiles)
     local x, y, z = A.xyz(shell)
     if x == nil or type(crowd) ~= "table" then return nil, "no_position" end
     now = tonumber(now) or A.now()
@@ -44,7 +44,7 @@ function R.choose(actor, shell, crowd, ally, now)
     R.searches = R.searches + 1
     A.metrics.safeRetreatChecks = A.metrics.safeRetreatChecks + 1
     local origin = { x = x, y = y, z = z }
-    local distance = math.max(2, math.min(12, tonumber(A.settings.crowd.fallbackTiles) or 8))
+    local distance = math.max(2, math.min(12, tonumber(stepTiles) or tonumber(A.settings.crowd.fallbackTiles) or 8))
     local safety = A.RetreatSafety
     local rows = safety.threats(shell, origin, now, distance + 6)
     if rows == nil or #rows == 0 then return nil, "unknown_threats" end

@@ -25,13 +25,13 @@ end
 
 function B.install()
     if B.installed then return true end
+    if A.now() < (B.retryAtMs or 0) then return false end
     local a = ProjectALife
     if type(a) ~= "table" or a.DecisionLoop == nil or a.Perception == nil or a.Combat == nil then
         B.tries = B.tries + 1
         if B.tries == 1 then A.log("Project A-Life not loaded yet, waiting") end
         return false
     end
-    B.installed = true
     local ok, err = pcall(function()
         A.Sandbox.refresh()
         B.lastSettingsMs = A.now()
@@ -46,8 +46,11 @@ function B.install()
     if not ok then
         A.metrics.errors = A.metrics.errors + 1
         A.log("install failed:", err)
-        return true
+        B.tries = B.tries + 1
+        B.retryAtMs = A.now() + 1000
+        return false
     end
+    B.installed = true
     A.log("v" .. A.VERSION .. " installed (" .. side() .. ")")
     return true
 end

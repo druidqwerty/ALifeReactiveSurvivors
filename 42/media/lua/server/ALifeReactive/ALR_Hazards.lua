@@ -9,6 +9,7 @@ require "ALifeReactive/02_ALR_Lines"
 require "ALifeReactive/ALR_Vehicles"
 require "ALifeReactive/ALR_Crowd"
 require "ALifeReactive/ALR_Retreat"
+require "ALifeReactive/ALR_Awareness"
 
 local A = ALifeReactive
 local H = { installed = false, nextVehicleMs = {}, nextCrowdMs = {}, legs = {} }
@@ -16,6 +17,7 @@ A.Hazards = H
 
 -- Our movement intents: the loop leaves them alone (Decisions.panicHolds).
 H.intents = { alr_dodge = true, alr_dive = true, alr_step_aside = true, alr_fallback = true, alr_regroup = true }
+H.intents.alr_make_space = true
 local PASSIVE = { idle = true, movement = true, scavenging = true, recovering = true }
 
 local function inRoom(shell)
@@ -188,18 +190,26 @@ function H.install(a)
         A.log("hook skipped: ModuleGunFear.interrupt")
         return false
     end
-    H.installed = true
     local decisions = a.DecisionLoop
+    A.ActionHandoff.install(a)
     if type(decisions) == "table" and type(decisions.panicHolds) == "table" then
         for intent in pairs(H.intents) do decisions.panicHolds[intent] = true end
     end
     A.wrap(gunFear, "interrupt", function(original)
         return function(actor, shell, state, now, helpers)
-            local fled = H.interrupt(actor, shell, state, now, helpers)
-            if fled ~= nil then return fled end
-            return original(actor, shell, state, now, helpers)
+            A.ActionHandoff.pending=nil
+            local ownHelpers=A.ActionHandoff.helpers(actor,state,helpers)
+            local fled = H.interrupt(actor, shell, state, now, ownHelpers)
+            if fled ~= nil then return A.ActionHandoff.protect(actor,fled,now) end
+            local fear = original(actor, shell, state, now, helpers)
+            if fear ~= nil then return fear end
+            local ok, reaction = pcall(A.Awareness.interrupt, actor, shell, state, now, ownHelpers)
+            if ok then return A.ActionHandoff.protect(actor,reaction,now) end
+            A.fail("awareness", reaction)
+            return nil
         end
     end, "ModuleGunFear.interrupt")
+    H.installed = true
     return true
 end
 

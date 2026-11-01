@@ -1,10 +1,10 @@
 name=A-Life: Reactive Survivors
 id=ALifeReactiveSurvivors
 author=druid
-modversion=0.3.0
+modversion=0.4.0
 versionMin=42.20.0
 poster=poster.png
 icon=icon.png
 require=ProjectALifeNPCs
 loadModAfter=ProjectALifeNPCs
-description=Test version. Add-on for Project A-Life [ALIFE NPCS]: NPCs react to the world sooner. A survivor attacks a zombie that walks at it from up to 6 tiles instead of waiting for the bite, runs from a group toward allies, dodges vehicles that come at it, draws the weapon faster, swings sooner, and says what it does (EN/RU). / Тестовая версия. Аддон к Project A-Life: NPC раньше реагируют на зомби, убегают от толпы к своим, уворачиваются от машин и комментируют происходящее (EN/RU).
+description=Add-on for Project A-Life [ALIFE NPCS]: earlier visible-threat reactions, armed engagement, checked short escapes for unarmed/tired NPCs, crowd retreat, vehicle dodges and EN/RU dialogue. Global Sandbox settings apply live. / Аддон к Project A-Life: ранняя реакция на видимые угрозы, бой вооружённых NPC, проверенный короткий отход безоружных/уставших, отступление от толпы, увороты от машин и реплики EN/RU. Общие настройки Sandbox применяются на ходу.

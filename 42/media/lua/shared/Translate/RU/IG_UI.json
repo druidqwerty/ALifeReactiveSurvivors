@@ -21,5 +21,7 @@
     "IGUI_ALR_vehicle_hit_2": "Ой! Куда едешь?!",
     "IGUI_ALR_vehicle_hit_again_1": "Ещё раз, и у нас будут проблемы.",
     "IGUI_ALR_bitten_1": "Отвали!",
-    "IGUI_ALR_bitten_2": "Он меня схватил!"
+    "IGUI_ALR_bitten_2": "Он меня схватил!",
+    "IGUI_ALR_make_space_1": "Слишком близко. Отойду немного.",
+    "IGUI_ALR_make_space_2": "Отступаю. Прикройте с той стороны!"
 }
