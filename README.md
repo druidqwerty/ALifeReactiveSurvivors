@@ -1,6 +1,6 @@
 # A-Life: Reactive Survivors [B42]
 
-<p align="center"><a href="https://boosty.to/lrgpp"><img src="docs/banner.png" alt="LrgPP mods on Boosty" width="640"></a></p>
+<p align="center"><a href="https://boosty.to/lrgpp"><img src="https://raw.githubusercontent.com/druidqwerty/ALifeReactiveSurvivors/040f714fca95eee32dbe938e87b3e14ab63e62e5/docs/banner.png" alt="LrgPP mods on Boosty" width="640"></a></p>
 
 Free and open source. The code is written by an AI; the direction, the testing and the time are mine. If the mod made your game better: [support on Boosty](https://boosty.to/lrgpp).
 

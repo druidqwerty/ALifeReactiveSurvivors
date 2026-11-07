@@ -1,6 +1,6 @@
 # A-Life: Reactive Survivors [B42]
 
-<p align="center"><a href="https://boosty.to/lrgpp"><img src="docs/banner.png" alt="Моды LrgPP на Boosty" width="640"></a></p>
+<p align="center"><a href="https://boosty.to/lrgpp"><img src="https://raw.githubusercontent.com/druidqwerty/ALifeReactiveSurvivors/040f714fca95eee32dbe938e87b3e14ab63e62e5/docs/banner.png" alt="Моды LrgPP на Boosty" width="640"></a></p>
 
 Мод бесплатный, исходники открыты. Код пишет нейросеть, а с меня — постановка задач, тесты и время. Если мод сделал игру лучше, [поддержите на Boosty](https://boosty.to/lrgpp).
 
