@@ -1,0 +1,9 @@
+# ALifeReactiveSurvivors — Workshop cover
+
+Created 2026-11-07 with built-in image_gen (no CLI/API fallback).
+
+Master: `cover-2026-master.png`. Steam export: `preview.png`, 512×512 PNG under 1 MiB. Canonical poster copies share the export. Old artwork is backed up in workspace-modder/projects/boosty/cover-backups-20261107. Do not run legacy make_art.py over these assets. Artwork-only publication; no code/version or mod content upload.
+
+## Exact generation prompt
+
+Use case: ads-marketing. Generate one square premium Steam Workshop cover for "A-Life: Reactive Survivors", a Project Zomboid add-on making NPC survivors notice approaching zombies, choose escape routes, and dodge vehicles. Match the A-Life Caravans cover family: huge weathered off-white condensed title in top third, gritty painterly cinematic realism, 1990s abandoned Kentucky, charcoal teal shadows versus amber sunset, rich atmospheric depth and strong readable silhouettes. Scene: foreground capable ordinary civilian woman survivor in olive jacket with backpack, turning alertly toward an approaching zombie at left while stepping back toward an open safe route beside a brick storefront. She holds a crowbar ready defensively in two plausible hands, a second civilian survivor beside a battered station wagon looks toward the threat. A clear few metres of space between zombie and people, emphasize awareness before contact, believable instinct and tactical escape, not superheroes or military assault. Small cluster of distant zombies near abandoned shops, no gore, no muzzle flashes. Top exact title: small "A-LIFE", very large two lines "REACTIVE" and "SURVIVORS". Bottom small "AWARE. ALERT. ALIVE." and small outlined "B42" badge. No version numbers, no TEST VERSION label, no UI, no arrows, no extra lettering or watermark, no frame. Keep title legible at thumbnail size and characters expressive with natural anatomy.
