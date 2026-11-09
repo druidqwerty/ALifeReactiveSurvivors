@@ -7,9 +7,15 @@ ALifeReactive = ALifeReactive or {}
 local A = ALifeReactive
 
 A.MOD_ID = "ALifeReactiveSurvivors"
-A.VERSION = "0.4.0"
+A.VERSION = "0.4.1"
 A.TAG = "[ALR]"
 A.settings = A.settings or {}
+
+-- True when Project A-Life 1.5+ is present (VehicleEvasion, CarLife, RadioReserved, or EarlyFight built-in).
+function A.isIntegratedInBase(a)
+    if type(a) ~= "table" or A.forceLegacyForTests == true then return false end
+    return a.VehicleEvasion ~= nil or a.CarLife ~= nil or a.RadioReserved ~= nil or a.EarlyFight ~= nil
+end
 
 A.metrics = {
     reactiveChecks = 0, reactiveCommits = 0, reactiveRefused = 0, crowdRefused = 0, unarmedRefused = 0,

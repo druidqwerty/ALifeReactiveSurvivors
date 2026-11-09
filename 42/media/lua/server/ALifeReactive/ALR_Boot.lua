@@ -32,6 +32,13 @@ function B.install()
         if B.tries == 1 then A.log("Project A-Life not loaded yet, waiting") end
         return false
     end
+    if A.isIntegratedInBase(a) then
+        B.installed = true
+        B.obsolete = true
+        A.settings.enabled = false
+        A.log("v" .. A.VERSION .. " auto-disabled (safe no-op): Project A-Life 1.5+ already integrates early reactions, melee combat, crowd retreat, and VehicleEvasion (" .. side() .. ")")
+        return true
+    end
     local ok, err = pcall(function()
         A.Sandbox.refresh()
         B.lastSettingsMs = A.now()
@@ -56,7 +63,7 @@ function B.install()
 end
 
 function B.pollSettings(now)
-    if not B.installed then return false end
+    if not B.installed or B.obsolete then return false end
     now = tonumber(now) or A.now()
     local last = B.lastSettingsMs
     if last ~= nil and now >= last and now - last < A.Sandbox.pollMs then return false end
@@ -73,7 +80,7 @@ end
 
 function B.report()
     local every = tonumber(A.settings.report.everyMinutes) or 0
-    if every <= 0 or not B.installed then return end
+    if every <= 0 or not B.installed or B.obsolete then return end
     B.minute = B.minute + 1
     if B.minute % every ~= 0 then return end
     local current = A.counters()

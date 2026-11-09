@@ -1,10 +1,10 @@
-name=A-Life: Reactive Survivors
+name=[OBSOLETE - Integrated in A-Life 1.5] A-Life: Reactive Survivors [B42]
 id=ALifeReactiveSurvivors
 author=druid
-modversion=0.4.0
+modversion=0.4.1
 versionMin=42.20.0
 poster=poster.png
 icon=icon.png
 require=ProjectALifeNPCs
 loadModAfter=ProjectALifeNPCs
-description=Add-on for Project A-Life [ALIFE NPCS]: earlier visible-threat reactions, armed engagement, checked short escapes for unarmed/tired NPCs, crowd retreat, vehicle dodges and EN/RU dialogue. Global Sandbox settings apply live. / Аддон к Project A-Life: ранняя реакция на видимые угрозы, бой вооружённых NPC, проверенный короткий отход безоружных/уставших, отступление от толпы, увороты от машин и реплики EN/RU. Общие настройки Sandbox применяются на ходу.
+description=OBSOLETE on Project A-Life 1.5+: early zombie reactions, new melee combat, crowd retreat, and vehicle evasion (VehicleEvasion, Caution, EarlyFight) are now integrated directly into the base Project A-Life 1.5 mod. Automatically disables itself (safe no-op) on A-Life 1.5+ so existing saves do not conflict. / НЕАКТУАЛЕН на Project A-Life 1.5+: ранняя реакция на зомби, новая боёвка, отход от толпы и уклонение от машин теперь встроены прямо в базовый мод Project A-Life 1.5. Автоматически отключается (no-op) на A-Life 1.5+, не ломая сохранения.
